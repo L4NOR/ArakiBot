@@ -4,33 +4,35 @@ from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime
 import asyncio
-import uvicorn
-from fastapi import FastAPI, BackgroundTasks
+from aiohttp import web
 from typing import Optional
 
 # Load environment variables
 load_dotenv()
 
-# FastAPI app for web server
-web_app = FastAPI()
+# Configuration du bot
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='!', intents=intents)
 
-@web_app.get("/")
-async def root():
-    return {"status": "Bot is running", "platform": "Discord Notification Bot"}
+# Configuration du serveur web
+app = web.Application()
 
-@web_app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
+# Web server routes
+async def root_handler(request):
+    return web.Response(text="Bot is running!", status=200)
 
-@web_app.post("/send-notification")
-async def send_notification(
-    platform: str, 
-    content: str, 
-    image_url: Optional[str] = None, 
-    author_name: Optional[str] = None,
-    background_tasks: BackgroundTasks = None
-):
+async def health_check(request):
+    return web.Response(text="Bot is healthy!", status=200)
+
+async def send_notification(request):
     """Endpoint to send notifications via bot"""
+    data = await request.json()
+    platform = data.get('platform')
+    content = data.get('content')
+    image_url = data.get('image_url')
+    author_name = data.get('author_name')
+
     try:
         if platform.lower() == 'twitter':
             channel_id = TWITTER_CHANNEL_ID
@@ -41,7 +43,7 @@ async def send_notification(
             role_id = TIKTOK_ROLE_ID
             create_embed_func = create_tiktok_embed
         else:
-            return {"error": "Invalid platform"}
+            return web.json_response({"error": "Invalid platform"}, status=400)
 
         channel = bot.get_channel(channel_id)
         role = channel.guild.get_role(role_id)
@@ -52,16 +54,16 @@ async def send_notification(
             author_name=author_name or (platform.capitalize() + " Creator")
         )
 
-        # Use background task for sending notification
-        background_tasks.add_task(channel.send, role.mention, embed=embed)
+        await channel.send(role.mention, embed=embed)
         
-        return {"status": "Notification sent successfully"}
+        return web.json_response({"status": "Notification sent successfully"})
     except Exception as e:
-        return {"error": str(e)}
+        return web.json_response({"error": str(e)}, status=500)
 
-intents = discord.Intents.default()
-intents.message_content = True
-bot = commands.Bot(command_prefix='!', intents=intents)
+# Add routes to the web application
+app.router.add_get('/', root_handler)
+app.router.add_get('/health', health_check)
+app.router.add_post('/send-notification', send_notification)
 
 # Configuration from environment variables
 TWITTER_CHANNEL_ID = int(os.getenv('TWITTER_CHANNEL_ID', '1326211329844969533'))
@@ -159,6 +161,15 @@ async def change_status():
     current_activity = next(activities_cycle)
     await bot.change_presence(activity=current_activity)
 
+# Start web server
+async def start_webserver():
+    port = int(os.getenv('PORT', 8080))
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, '0.0.0.0', port)
+    await site.start()
+    print(f"Web server started on port {port}")
+
 @bot.event
 async def on_ready():
     print(f'Bot is ready. Logged in as {bot.user}')
@@ -170,18 +181,14 @@ async def on_ready():
     ]
     activities_cycle = iter(activities)
     change_status.start()
-
-# Async function to run both Discord bot and web server
-async def main():
+    
     # Start web server
-    config = uvicorn.Config(web_app, host="0.0.0.0", port=8080)
-    server = uvicorn.Server(config)
-    
-    # Run web server in background
-    server_task = asyncio.create_task(server.serve())
-    
-    # Run Discord bot
-    await bot.start(os.getenv('DISCORD_TOKEN'))
+    await start_webserver()
+
+# Main function to run the bot
+async def main():
+    async with bot:
+        await bot.start(os.getenv('DISCORD_TOKEN'))
 
 # Run the application
 if __name__ == "__main__":
