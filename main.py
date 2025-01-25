@@ -155,8 +155,8 @@ async def simulate_tiktok(ctx, *, content):
 async def change_status():
     """Alternate between TikTok and Twitter status"""
     activities = [
-        discord.Game("Joue a scroller sur TikTok"),
-        discord.Game("Joue a lire des Twittos")
+        discord.Game("a scroller sur TikTok"),
+        discord.Game("a lire des Twittos")
     ]
     current_activity = next(activities_cycle)
     await bot.change_presence(activity=current_activity)
@@ -176,8 +176,8 @@ async def on_ready():
     # Initialize the cycle and start changing status
     global activities_cycle
     activities = [
-        discord.Game("Joue a scroller sur TikTok"),
-        discord.Game("Joue a lire des Twittos")
+        discord.Game("a scroller sur TikTok"),
+        discord.Game("a lire des Twittos")
     ]
     activities_cycle = iter(activities)
     change_status.start()
