@@ -4,9 +4,60 @@ from discord.ext import commands, tasks
 from dotenv import load_dotenv
 from datetime import datetime
 import asyncio
+import uvicorn
+from fastapi import FastAPI, BackgroundTasks
+from typing import Optional
 
 # Load environment variables
 load_dotenv()
+
+# FastAPI app for web server
+web_app = FastAPI()
+
+@web_app.get("/")
+async def root():
+    return {"status": "Bot is running", "platform": "Discord Notification Bot"}
+
+@web_app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
+@web_app.post("/send-notification")
+async def send_notification(
+    platform: str, 
+    content: str, 
+    image_url: Optional[str] = None, 
+    author_name: Optional[str] = None,
+    background_tasks: BackgroundTasks = None
+):
+    """Endpoint to send notifications via bot"""
+    try:
+        if platform.lower() == 'twitter':
+            channel_id = TWITTER_CHANNEL_ID
+            role_id = TWITTER_ROLE_ID
+            create_embed_func = create_twitter_embed
+        elif platform.lower() == 'tiktok':
+            channel_id = TIKTOK_CHANNEL_ID
+            role_id = TIKTOK_ROLE_ID
+            create_embed_func = create_tiktok_embed
+        else:
+            return {"error": "Invalid platform"}
+
+        channel = bot.get_channel(channel_id)
+        role = channel.guild.get_role(role_id)
+
+        embed = create_embed_func(
+            text=content, 
+            image_url=image_url, 
+            author_name=author_name or (platform.capitalize() + " Creator")
+        )
+
+        # Use background task for sending notification
+        background_tasks.add_task(channel.send, role.mention, embed=embed)
+        
+        return {"status": "Notification sent successfully"}
+    except Exception as e:
+        return {"error": str(e)}
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -102,8 +153,8 @@ async def simulate_tiktok(ctx, *, content):
 async def change_status():
     """Alternate between TikTok and Twitter status"""
     activities = [
-        discord.Game("a scroller sur TikTok"),
-        discord.Game("a lire des Twittos")
+        discord.Game("Joue a scroller sur TikTok"),
+        discord.Game("Joue a lire des Twittos")
     ]
     current_activity = next(activities_cycle)
     await bot.change_presence(activity=current_activity)
@@ -114,11 +165,24 @@ async def on_ready():
     # Initialize the cycle and start changing status
     global activities_cycle
     activities = [
-        discord.Game("a scroller sur TikTok"),
-        discord.Game("a lire des Twittos")
+        discord.Game("Joue a scroller sur TikTok"),
+        discord.Game("Joue a lire des Twittos")
     ]
     activities_cycle = iter(activities)
     change_status.start()
 
-# Run the bot
-bot.run(os.getenv('DISCORD_TOKEN'))
+# Async function to run both Discord bot and web server
+async def main():
+    # Start web server
+    config = uvicorn.Config(web_app, host="0.0.0.0", port=8080)
+    server = uvicorn.Server(config)
+    
+    # Run web server in background
+    server_task = asyncio.create_task(server.serve())
+    
+    # Run Discord bot
+    await bot.start(os.getenv('DISCORD_TOKEN'))
+
+# Run the application
+if __name__ == "__main__":
+    asyncio.run(main())
