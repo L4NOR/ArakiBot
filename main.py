@@ -176,8 +176,8 @@ async def on_ready():
     # Initialize the cycle and start changing status
     global activities_cycle
     activities = [
-        discord.Game("a scroller sur TikTok"),
-        discord.Game("a lire des Twittos")
+        discord.Game(" scroller sur TikTok"),
+        discord.Game(" lire des Twittos")
     ]
     activities_cycle = iter(activities)
     change_status.start()
