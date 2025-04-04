@@ -13,7 +13,9 @@ load_dotenv()
 # Configuration du bot
 intents = discord.Intents.default()
 intents.message_content = True
-bot = commands.Bot(command_prefix='!', intents=intents)
+
+# Créer le bot avec help_command=None pour désactiver la commande !help
+bot = commands.Bot(command_prefix='!', intents=intents, help_command=None)
 
 # Configuration du serveur web
 app = web.Application()
@@ -154,10 +156,7 @@ async def simulate_tiktok(ctx, *, content):
 @tasks.loop(seconds=60)
 async def change_status():
     """Alternate between TikTok and Twitter status"""
-    activities = [
-        discord.Game("a scroller sur TikTok"),
-        discord.Game("a lire des Twittos")
-    ]
+    global activities_cycle
     current_activity = next(activities_cycle)
     await bot.change_presence(activity=current_activity)
 
