@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from config_catenaccio import GREEN_COLOR, DARK_BLUE_COLOR, ROLE_CATENACCIO_ID, ANNOUNCEMENTS_CHANNEL_ID, ANNOUNCEMENT_REACTIONS
-from config_catenaccio import DISCUSSIONS_CATEGORY_ID, THREAD_AUTO_ARCHIVE_DURATION
+from config import GREEN_COLOR, DARK_BLUE_COLOR, ROLE_CATENACCIO_ID, ANNOUNCEMENTS_CHANNEL_ID, ANNOUNCEMENT_REACTIONS
+from config import DISCUSSIONS_CATEGORY_ID, THREAD_AUTO_ARCHIVE_DURATION
 
 def setup_commands(bot):
     # Commande Araki (aide)

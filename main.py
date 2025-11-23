@@ -2,10 +2,10 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import asyncio
-from config_catenaccio import BOT_TOKEN, COMMAND_PREFIX, intents
-from commands_catenaccio import setup_commands
-from events_catenaccio import setup
-from utils_catenaccio import app
+from config import BOT_TOKEN, COMMAND_PREFIX, intents
+from commands import setup_commands
+from events import setup
+from utils import app
 
 async def main():
     # Initialisation du bot

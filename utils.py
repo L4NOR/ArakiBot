@@ -1,6 +1,6 @@
 from aiohttp import web
 import asyncio
-from config_catenaccio import PORT
+from config import PORT
 
 # Configuration du serveur web
 app = web.Application()

@@ -1,6 +1,6 @@
 import discord
 import re
-from config_catenaccio import ROLE_CATENACCIO_ID, WELCOME_THREAD_ID
+from config import ROLE_CATENACCIO_ID, WELCOME_THREAD_ID
 
 async def setup(bot):
     @bot.event
