@@ -3,6 +3,9 @@ from discord.ext import commands
 from config import GREEN_COLOR, DARK_BLUE_COLOR, ROLE_CATENACCIO_ID, ANNOUNCEMENTS_CHANNEL_ID, ANNOUNCEMENT_REACTIONS
 from config import DISCUSSIONS_CATEGORY_ID, THREAD_AUTO_ARCHIVE_DURATION
 
+# ID du canal de test
+TEST_CHANNEL_ID = 1330221808753840159
+
 def setup_commands(bot):
     # Commande Araki (aide)
     @bot.command(name='Araki')
@@ -97,7 +100,7 @@ def setup_commands(bot):
             description=(
                 "De nouveaux chapitres viennent d'arriver ! Préparez-vous à suivre les exploits "
                 "d'Araki et son équipe dans leur quête pour devenir les meilleurs défenseurs du football !\n\n"
-                "━━━━━━━━━━━━━━━━━━━━━━━━"
+                "━━━━━━━━━━━━━━━━━━━━━━━"
             ),
             color=DARK_BLUE_COLOR
         )
@@ -124,7 +127,7 @@ def setup_commands(bot):
         
         # Séparateur
         embed.add_field(
-            name="━━━━━━━━━━━━━━━━━━━━━━━━",
+            name="━━━━━━━━━━━━━━━━━━━━━━",
             value="",
             inline=False
         )
@@ -132,7 +135,7 @@ def setup_commands(bot):
         # Description si fournie
         if description:
             embed.add_field(
-                name="📝 Aperçu",
+                name="🔍 Aperçu",
                 value=f"{description}",
                 inline=False
             )
@@ -162,6 +165,146 @@ def setup_commands(bot):
         
         # Supprimer la commande originale
         await ctx.message.delete()
+
+    # Commande TEST pour annoncer un nouveau chapitre
+    @bot.command(name='test_newchapter_catenaccio')
+    @commands.has_permissions(administrator=True)
+    async def test_announce_new_chapter(ctx, *args):
+        if ctx.channel.id != TEST_CHANNEL_ID:
+            await ctx.send("Cette commande ne peut être utilisée que dans le canal de test.")
+            return
+        
+        # Vérifier qu'il y a au moins 2 arguments (au moins un numéro de chapitre et un lien)
+        if len(args) < 2:
+            await ctx.send("Syntaxe incorrecte. Utilisez `!test_newchapter_catenaccio <numéros_chapitres> <lien> [description]`")
+            return
+        
+        # Trouver où se termine la liste des chapitres et où commence le lien
+        chapter_numbers = []
+        link_index = 0
+        
+        for i, arg in enumerate(args):
+            # Si l'argument ressemble à un URL (commence par http), c'est notre lien
+            if arg.startswith("http"):
+                link_index = i
+                break
+            # Sinon, c'est un numéro de chapitre
+            chapter_numbers.append(arg)
+        
+        # Si aucun lien n'a été trouvé
+        if link_index == 0:
+            await ctx.send("Lien manquant. Utilisez `!test_newchapter_catenaccio <numéros_chapitres> <lien> [description]`")
+            return
+        
+        chapter_link = args[link_index]
+        
+        # Récupérer la description si elle existe (tout ce qui vient après le lien)
+        description = None
+        if link_index + 1 < len(args):
+            description = " ".join(args[link_index + 1:])
+        
+        # Formater les numéros de chapitres pour l'affichage
+        chapters_display = ", ".join(chapter_numbers)
+        
+        role_id = ROLE_CATENACCIO_ID
+        role = ctx.guild.get_role(role_id)
+        
+        if not role:
+            await ctx.send("Le rôle spécifié n'a pas été trouvé.")
+            return
+
+        # Créer l'embed avec un design amélioré
+        embed = discord.Embed(
+            title="⚽ [TEST] NOUVEAU(X) CHAPITRE(S) DE CATENACCIO ⚽",
+            description=(
+                "**⚠️ CECI EST UN TEST ⚠️**\n\n"
+                "De nouveaux chapitres viennent d'arriver ! Préparez-vous à suivre les exploits "
+                "d'Araki et son équipe dans leur quête pour devenir les meilleurs défenseurs du football !\n\n"
+                "━━━━━━━━━━━━━━━━━━━━━━━"
+            ),
+            color=DARK_BLUE_COLOR
+        )
+        
+        # Informations sur le chapitre
+        embed.add_field(
+            name="📖 Chapitre(s)",
+            value=f"**#{chapters_display}**",
+            inline=True
+        )
+        
+        embed.add_field(
+            name="⏰ Disponible",
+            value="**MAINTENANT !**",
+            inline=True
+        )
+        
+        # Lien de lecture
+        embed.add_field(
+            name="📚 Lien de lecture",
+            value=f"[Cliquez ici pour lire le(s) chapitre(s) !]({chapter_link})",
+            inline=False
+        )
+        
+        # Séparateur
+        embed.add_field(
+            name="━━━━━━━━━━━━━━━━━━━━━━",
+            value="",
+            inline=False
+        )
+        
+        # Description si fournie
+        if description:
+            embed.add_field(
+                name="🔍 Aperçu",
+                value=f"{description}",
+                inline=False
+            )
+        
+        # Note de bas de page
+        embed.set_footer(
+            text=(
+                "N'oubliez pas de partager vos analyses tactiques et réactions sur twitter et discord ! "
+                "Bonne lecture à tous ! 🎉"
+            )
+        )
+        
+        # Petit rappel en haut du message
+        reminder_text = (
+            f"{role.mention}\n"
+            "───────────────────────\n"
+            "**[TEST] De nouveaux chapitres viennent d'être publiés !**\n"
+            "Retrouvez tous les détails ci-dessous ⬇️"
+        )
+
+        # Envoyer l'annonce
+        announcement = await ctx.send(reminder_text, embed=embed)
+        
+        # Ajouter plusieurs réactions
+        for reaction in ANNOUNCEMENT_REACTIONS:
+            await announcement.add_reaction(reaction)
+        
+        # Supprimer la commande originale
+        await ctx.message.delete()
+
+    # Gestion des erreurs pour la commande newchapter_catenaccio
+    @announce_new_chapter.error
+    async def announce_new_chapter_error(ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("Vous n'avez pas la permission d'utiliser cette commande.")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("Il manque des arguments. Usage: !newchapter_catenaccio <numéros_chapitres> <lien> [description]")
+        else:
+            await ctx.send(f"Une erreur s'est produite: {str(error)}")
+
+    # Gestion des erreurs pour la commande test
+    @test_announce_new_chapter.error
+    async def test_announce_new_chapter_error(ctx, error):
+        if isinstance(error, commands.MissingPermissions):
+            await ctx.send("Vous n'avez pas la permission d'utiliser cette commande.")
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send("Il manque des arguments. Usage: !test_newchapter_catenaccio <numéros_chapitres> <lien> [description]")
+        else:
+            await ctx.send(f"Une erreur s'est produite: {str(error)}")
 
     # Commande pour donner une récapitulation du dernier chapitre
     @bot.command(name='recap')
