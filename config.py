@@ -26,7 +26,7 @@ GREEN_COLOR = 0x00FF00      # Vert terrain de foot
 DARK_BLUE_COLOR = 0x003366  # Bleu foncé tactique
 
 # Réactions pour les annonces
-ANNOUNCEMENT_REACTIONS = ["⚽", "🔥", "⚡"]
+ANNOUNCEMENT_REACTIONS = ["🔥", "👀", "❤️"]
 
 # Paramètres pour les threads de discussion
 THREAD_AUTO_ARCHIVE_DURATION = 1440  # 24 heures
