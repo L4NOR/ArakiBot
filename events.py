@@ -7,7 +7,8 @@ async def setup(bot):
     async def on_ready():
         print(f'Bot connecté en tant que {bot.user.name}')
         await bot.change_presence(activity=discord.Game(name="Lire Catenaccio ⚽"))
-        from utils_catenaccio import start_webserver
+        # Import corrigé ici
+        from utils import start_webserver
         await start_webserver(bot)
 
     @bot.event
