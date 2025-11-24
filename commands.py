@@ -26,8 +26,7 @@ def setup_commands(bot):
                 "• 👋 Gestion des messages de bienvenue dans l'univers de Catenaccio\n"
                 "• 📣 Notifications de nouveaux chapitres\n"
                 "• 🏷️ Suivi automatique des rôles\n"
-                "• 🔔 Alertes communautaires\n"
-                "• 🎴 Système de collection de cartes"
+                "• 🔔 Alertes communautaires"
             ),
             inline=False
         )
@@ -37,17 +36,7 @@ def setup_commands(bot):
             name="🎉 Interaction Communautaire",
             value=(
                 "• Réactions automatiques aux annonces\n"
-                "• Mentions de rôles personnalisées\n"
-                "• Collection et échange de cartes de joueurs"
-            ),
-            inline=False
-        )
-        
-        embed.add_field(
-            name="🎴 Système de Cartes",
-            value=(
-                "Utilisez `a!card_help` pour découvrir le système de collection de cartes !\n"
-                "Collectionnez, échangez et devenez le meilleur collectionneur !"
+                "• Mentions de rôles personnalisées"
             ),
             inline=False
         )
