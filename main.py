@@ -5,6 +5,7 @@ import asyncio
 from config import BOT_TOKEN, COMMAND_PREFIX, intents
 from commands import setup_commands
 from events import setup
+from card_system import setup_card_commands
 
 async def main():
     # Initialisation du bot
@@ -15,6 +16,7 @@ async def main():
     
     # Configuration des commandes et événements
     setup_commands(bot)  # Commandes avec préfixe a!
+    setup_card_commands(bot)  # Système de cartes
     await setup(bot)  # Ceci configure déjà l'événement on_ready
     
     # Lancer le bot
