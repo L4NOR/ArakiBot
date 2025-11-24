@@ -15,6 +15,8 @@ async def main():
     
     # Configuration des commandes et événements
     setup_commands(bot)  # Commandes avec préfixe a!
+    from commands_cards import setup_card_commands
+    setup_card_commands(bot)
     await setup(bot)  # Ceci configure déjà l'événement on_ready
     
     # Lancer le bot
