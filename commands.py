@@ -47,7 +47,12 @@ def setup_commands(bot):
             name="🎴 Système de Cartes",
             value=(
                 "Utilisez `a!card_help` pour découvrir le système de collection de cartes !\n"
-                "Collectionnez, échangez et devenez le meilleur collectionneur !"
+                "Collectionnez, échangez et devenez le meilleur collectionneur !\n\n"
+                "**Commandes principales :**\n"
+                "• `a!daily` - Récompense quotidienne\n"
+                "• `a!shop` - Voir la boutique de packs\n"
+                "• `a!collection` - Voir votre collection\n"
+                "• `a!balance` - Voir vos crédits"
             ),
             inline=False
         )
