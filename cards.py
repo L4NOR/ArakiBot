@@ -662,7 +662,7 @@ def setup_card_commands(bot):
         sender_data = card_system.get_user_data(trade["sender_id"])
         receiver_data = card_system.get_user_data(trade["receiver_id"])
         
-        card = next((c for c in sender_data["collection"] if c["id"] == trade["card"]["id"]], None)
+        card = next((c for c in sender_data["collection"] if c["id"] == trade["card"]["id"]), None)
         
         if not card:
             await ctx.send("❌ La carte n'est plus disponible !")
