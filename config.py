@@ -11,7 +11,7 @@ PORT = int(os.getenv('PORT', 8080))
 COMMAND_PREFIX = 'a!'  # 'a' pour Araki
 
 # ID des rôles et canaux (à remplacer par vos propres IDs)
-ROLE_CATENACCIO_ID = 1332429989085184010  # À remplacer
+ROLE_CATENACCIO_ID = 1465027907968831541  # À remplacer
 WELCOME_THREAD_ID = 1330182024832614541   # À remplacer
 ANNOUNCEMENTS_CHANNEL_ID = 1330182401787170847  # À remplacer
 DISCUSSIONS_CATEGORY_ID = 1330182024832614541   # À remplacer
