@@ -8,7 +8,19 @@
                     "position": "Défense",
                     "rarity": "Mythique",
                     "id": "Araki_Mythique_1234",
-                    "obtained_at": "2025-11-26T10:30:00"
+                    "obtained_at": "2025-11-26T10:30:00",
+                    "stats": {
+                        "vitesse": 88,
+                        "defense": 99,
+                        "attaque": 75,
+                        "technique": 92,
+                        "physique": 90,
+                        "mental": 95
+                    },
+                    "description": "Le génie tactique de la défense",
+                    "image_url": null,
+                    "special_ability": "Catenaccio Perfect",
+                    "nationality": "🇯🇵 Japon"
                 }
             ],
             "packs_opened": 5,
