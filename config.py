@@ -6,7 +6,7 @@ import discord
 load_dotenv()
 
 # Configuration du bot
-BOT_TOKEN = os.getenv('TOKEN')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 PORT = int(os.getenv('PORT', 8080))
 COMMAND_PREFIX = 'a!'  # 'a' pour Araki
 
